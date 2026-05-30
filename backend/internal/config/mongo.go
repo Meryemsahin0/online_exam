@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -10,8 +11,13 @@ import (
 )
 
 func ConnectDB() *mongo.Database {
-	// localhost yerine direkt 127.0.0.1 yazarak IPv6 karmaşasını çözüyoruz
-	clientOptions := options.Client().ApplyURI("mongodb://127.0.0.1:27017")
+	// Eğer canlı ortamda (Render) MONGO_URI tanımlıysa onu al, yoksa lokalde çalışması için 127.0.0.1 kullan
+	mongoURI := os.Getenv("MONGO_URI")
+	if mongoURI == "" {
+		mongoURI = "mongodb://127.0.0.1:27017"
+	}
+
+	clientOptions := options.Client().ApplyURI(mongoURI)
 	
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -26,6 +32,6 @@ func ConnectDB() *mongo.Database {
 		log.Fatalf("MongoDB Ping hatası: %v", err)
 	}
 
-	log.Println("MongoDB'ye başarıyla bağlanıldı! (v2 Sürücüsü)")
+	log.Println("MongoDB'ye başarıyla bağlanıldı!")
 	return client.Database("online_exam_db")
 }

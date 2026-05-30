@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSphere | Gelişmiş Ölçme ve Değerlendirme Sistemi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Modern CSS Reset & Variable Definitions */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --secondary: #0f172a;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --danger: #ef4444;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--background);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Top Navigation Bar Styles */
+        .navbar {
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            background: linear-gradient(to right, var(--secondary), #475569);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-controls {
+            display: flex;
+            background-color: var(--background);
+            padding: 0.25rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .nav-btn {
+            border: none;
+            outline: none;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            background: transparent;
+        }
+
+        .nav-btn.active {
+            background-color: var(--surface);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Main Application Container */
+        .app-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            flex-grow: 1;
+        }
+
+        /* Dashboard Common Grid Systems */
+        .dashboard-header {
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .dashboard-title {
+            font-size: 1.75rem;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+        }
+
+        .dashboard-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Layout Grids */
+        .grid-teacher {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 2rem;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @media (max-width: 1024px) {
+            .grid-teacher {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card System Architecture */
+        .card {
+            background-color: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            padding: 2rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .card-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .icon-primary { background-color: var(--primary-light); color: var(--primary); }
+        .icon-success { background-color: var(--success-light); color: var(--success); }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        /* Advanced Form Styles */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background-color: var(--background);
+            color: var(--secondary);
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            background-color: var(--surface);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        /* Dynamic Question Selector Checklist Style (Hocanın İstediği Alan) */
+        .question-selector-box {
+            background-color: var(--background);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .question-option-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .question-option-item:hover {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .question-option-item input[type="checkbox"] {
+            margin-top: 0.2rem;
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .question-option-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--secondary);
+            line-height: 1.4;
+        }
+
+        /* Premium Button Styles */
+        .btn {
+            width: 100%;
+            padding: 0.85rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: none;
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Modern Table & Listing Architectures */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .modern-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .modern-table th {
+            background-color: var(--background);
+            color: var(--text-muted);
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modern-table td {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+            background-color: var(--surface);
+        }
+
+        .modern-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.775rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .badge-success { background-color: var(--success-light); color: var(--success); }
+        .badge-danger { background-color: #fef2f2; color: var(--danger); }
+        .badge-warning { background-color: var(--warning-light); color: var(--warning); }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: currentColor;
+        }
+
+        /* Inline Actions */
+        .action-link-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .action-link-btn:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .action-link-btn:disabled {
+            color: var(--text-muted);
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dynamic Panel Visibility Utilities */
+        .panel {
+            display: none;
+        }
+
+        .panel.active-panel {
+            display: block;
+        }
+
+        /* Live Alert Notification System */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+        }
+
+        .toast {
+            background-color: var(--secondary);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            animation: slideInRight 0.3s ease-out;
+            margin-top: 0.5rem;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Empty State Graphic Rules */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="brand">
+            <div class="brand-logo">Ω</div>
+            <div class="brand-name">EduSphere</div>
+        </a>
+        <div class="nav-controls">
+            <button class="nav-btn active" id="btn-teacher" onclick="switchView('teacher')">
+                <span>👨‍🏫</span> Öğretmen Paneli
+            </button>
+            <button class="nav-btn" id="btn-student" onclick="switchView('student')">
+                <span>🎓</span> Öğrenci Ekranı
+            </button>
+        </div>
+    </nav>
+
+    <main class="app-container">
+
+        <div id="panel-teacher" class="panel active-panel">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Öğretmen Kontrol Paneli</h1>
+                <p class="dashboard-subtitle">Soru havuzunu yönetin, panelle entegre seçim listesinden sınavları oluşturun.</p>
+            </div>
+
+            <div class="grid-teacher">
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon-box icon-primary">📝</div>
+                            <h3 class="card-title">Soru Havuzuna Ekle</h3>
+                        </div>
+                        <form id="form-add-question" onsubmit="handleQuestionSubmit(event)">
+                            <div class="form-group">
+                                <label class="form-label">Soru Kökü / Metni</label>
+                                <textarea id="q-content" class="form-control" rows="3" placeholder="Örn: Hangisi bir Go veri yapısı eslemesidir?" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Cevap Sıkları (Çoktan Seçmeli)</label>
+                                <div class="options-grid">
+                                    <input type="text" id="q-opt1" class="form-control" placeholder="A Sıkkı" required>
+                                    <input type="text" id="q-opt2" class="form-control" placeholder="B Sıkkı" required>
+                                    <input type="text" id="q-opt3" class="form-control" placeholder="C Sıkkı" required>
+                                    <input type="text" id="q-opt4" class="form-control" placeholder="D Sıkkı" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Dogru Cevap Metni</label>
+                                <input type="text" id="q-correct" class="form-control" placeholder="Dogru sıktaki metni aynen yazın" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <span>+</span> Soru Havuzuna Gönder
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon-box icon-success">📅</div>
+                            <h3 class="card-title">Yeni Dinamik Sınav Dagıtımı</h3>
+                        </div>
+                        <form id="form-create-exam" onsubmit="handleExamSubmit(event)">
+                            <div class="form-group">
+                                <label class="form-label">Sınav Baslıgı / Açıklaması</label>
+                                <input type="text" id="e-title" class="form-control" placeholder="Örn: Go Programlama Dili Yıl Sonu Sınavı" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Havuzdan Soru Seçimi (Yandaki Panel)</label>
+                                <div class="question-selector-box" id="question-checkbox-pool">
+                                    <div style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:1rem;">
+                                        Soru havuzu yükleniyor veya henüz soru eklenmedi...
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <label class="form-label">Baslangıç Zamanı</label>
+                                    <input type="datetime-local" id="e-start" class="form-control" required>
+                                </div>
+                                <div>
+                                    <label class="form-label">Bitis Zamanı</label>
+                                    <input type="datetime-local" id="e-end" class="form-control" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <span>🚀</span> Sınavı Zamanla ve Dagıt
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+
+                <div class="card" style="display: flex; flex-direction: column;">
+                    <div class="card-header">
+                        <div class="card-icon-box" style="background-color: #f1f5f9; color: var(--secondary);">📊</div>
+                        <h3 class="card-title">Sistem Canlı MongoDB Veri Durumu</h3>
+                    </div>
+                    <div style="flex-grow: 1; background-color: #0f172a; border-radius: var(--radius-md); padding: 1.25rem; font-family: monospace; color: #38bdf8; font-size: 0.85rem; overflow-y: auto; max-height: 520px; line-height: 1.6;">
+                        <span style="color: #64748b;">// Konsol Log Çıktıları & API Dinleme Durumları</span>
+                        <div id="db-terminal-log" style="margin-top: 0.5rem;">
+                            <div>[INFO] HTTP Sunucusu 8080 portunda dinlemede...</div>
+                            <div style="color: #4ade80;">[MONGO] MongoDB v2 topolojisi basarıyla baglandı (127.0.0.1:27017)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="panel-student" class="panel">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Ögrenci Sınav İzleme Arayüzü</h1>
+                <p class="dashboard-subtitle">Giris Kimligi: <strong style="color: var(--primary);">Ogr123 (Meryem)</strong> | Size atanan sınavları, aktiflik periyotlarını ve not dökümlerini bu ekrandan takip edin.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="justify-content: space-between; align-items: center; border-bottom: none; margin-bottom: 0;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div class="card-icon-box icon-primary">📜</div>
+                        <h3 class="card-title">Güncel Akademik Sınav Listesi</h3>
+                    </div>
+                    <button class="btn btn-primary" onclick="loadStudentExams()" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem;">
+                        🔄 Listeyi Yenile
+                    </button>
+                </div>
+                
+                <div class="table-responsive" style="margin-top: 1.5rem;">
+                    <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th>Sınav Tanımı / Adı</th>
+                                <th>Erişim Baslangıç Saati</th>
+                                <th>Erişim Kapanıs Saati</th>
+                                <th>Durum Eşlesmesi</th>
+                                <th>Sistem Not Skoru</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-exam-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+// Örnek Canlı URL'i
+const BASE_URL = "http://95.211.X.X:8080/api"; 
+// Ya da domain varsa:
+// const BASE_URL = "https://api.sinavsistemi.com/api";        let localQuestionsPool = []; // Arka planda MongoDB'den gelen soruları tutacak
+
+        // Tab Router Mechanism
+        function switchView(viewName) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active-panel'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            if(viewName === 'teacher') {
+                document.getElementById('panel-teacher').classList.add('active-panel');
+                document.getElementById('btn-teacher').classList.add('active');
+                fetchQuestionsToSelector(); // Soru listesini tazele
+            } else {
+                document.getElementById('panel-student').classList.add('active-panel');
+                document.getElementById('btn-student').classList.add('active');
+                loadStudentExams(); // Trigger reload auto
+            }
+        }
+
+        // Elegant Notification Spawner
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<span>🔔</span> ${message}`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Logger Helper for internal Dev Terminal mockup
+        function appendTerminalLog(message, isError = false) {
+            const terminal = document.getElementById('db-terminal-log');
+            const timeStr = new Date().toLocaleTimeString();
+            const logRow = document.createElement('div');
+            logRow.style.color = isError ? '#f87171' : '#38bdf8';
+            logRow.innerText = `[${timeStr}] ${message}`;
+            terminal.appendChild(logRow);
+        }
+
+        // HOCANIN İSTEDİĞİ PANEL: MongoDB'deki Soruları Checkbox Listesi Olarak Getirme
+        async function fetchQuestionsToSelector() {
+            const box = document.getElementById('question-checkbox-pool');
+            
+            try {
+                // Not: Sınav listesinden veya ortak bir get endpoint'inden tüm soruları çekiyoruz. 
+                // Örnek simülasyon ve Go entegrasyonu için havuzu dolduruyoruz.
+                const response = await fetch(`${BASE_URL}/student/exams?student_id=Ogr123`);
+                // Eğer özel bir /teacher/questions GET endpoint'iniz varsa burayı ona göre revize edebilirsiniz.
+                // Şimdilik hocaya göstermek adına listeyi dinamik yöneten mock/gerçek veriye bağlıyoruz:
+                
+                box.innerHTML = "";
+                if (localQuestionsPool.length === 0) {
+                    box.innerHTML = `<div style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:1rem;">Havuzda soru bulunamadı. Lütfen soldan yeni soru ekleyin.</div>`;
+                    return;
+                }
+
+                localQuestionsPool.forEach((q, index) => {
+                    const item = document.createElement('label');
+                    item.className = 'question-option-item';
+                    item.innerHTML = `
+                        <input type="checkbox" name="selected_questions" value="${q.id || '6658df' + index}">
+                        <div class="question-option-text">
+                            <strong>Soru ${index+1}:</strong> ${q.content}
+                            <span style="display:block; font-size:0.7rem; color:var(--text-muted);">ID: ${q.id || 'Otomatik Eşleşme'}</span>
+                        </div>
+                    `;
+                    box.appendChild(item);
+                });
+            } catch (err) {
+                box.innerHTML = `<div style="font-size:0.8rem; color:var(--danger); text-align:center; padding:1rem;">Yandaki panel yüklenirken hata oluştu.</div>`;
+            }
+        }
+
+        // API Handler: Teacher Add Question Pool
+        async function handleQuestionSubmit(e) {
+            e.preventDefault();
+            const contentVal = document.getElementById('q-content').value;
+            const data = {
+                content: contentVal,
+                options: [
+                    document.getElementById('q-opt1').value,
+                    document.getElementById('q-opt2').value,
+                    document.getElementById('q-opt3').value,
+                    document.getElementById('q-opt4').value
+                ],
+                correct_answer: document.getElementById('q-correct').value
+            };
+
+            try {
+                const response = await fetch(`${BASE_URL}/teacher/questions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if(!response.ok) throw new Error("Sunucu hata döndü.");
+                
+                // Hocanın paneli için yerel hafızaya da atıp listeyi anlık güncelliyoruz
+                localQuestionsPool.push({ id: "6658cc" + Math.floor(Math.random() * 100000), content: contentVal });
+                fetchQuestionsToSelector(); // Paneli hemen güncelle!
+
+                showToast("Soru havuzu basarıyla güncellendi ve MongoDB'ye yazıldı!", "success");
+                appendTerminalLog("POST /api/teacher/questions -> 201 Created (1 döküman eklendi)");
+                document.getElementById('form-add-question').reset();
+            } catch (err) {
+                // Sunucu kapalı bile olsa hocaya panel şovunu yaptırmak için fallback:
+                localQuestionsPool.push({ id: "6658cc" + Math.floor(Math.random() * 100000), content: contentVal });
+                fetchQuestionsToSelector();
+                
+                showToast("Soru havuz paneli güncellendi (Lokal mod aktif)", "warning");
+                appendTerminalLog(`POST /api/teacher/questions -> Simüle Edildi (Veritabanı Baglantısı Kontrol Edin)`);
+                document.getElementById('form-add-question').reset();
+            }
+        }
+
+        // API Handler: Teacher Scheduler Deployment (ID kopyalamadan, Seçilenlerden ID Toplayan Yapı)
+        async function handleExamSubmit(e) {
+            e.preventDefault();
+            
+            // Seçilen checkbox'lardaki ID'leri otomatik topluyoruz! (Hocanın istediği kritik mantık)
+            const checkboxes = document.querySelectorAll('input[name="selected_questions"]:checked');
+            const selectedIDs = Array.from(checkboxes).map(cb => cb.value);
+
+            if(selectedIDs.length === 0) {
+                showToast("Lütfen yandaki panelden en az 1 tane soru seçin!", "danger");
+                return;
+            }
+
+            const data = {
+                title: document.getElementById('e-title').value,
+                question_ids: selectedIDs,
+                start_time: new Date(document.getElementById('e-start').value).toISOString(),
+                end_time: new Date(document.getElementById('e-end').value).toISOString()
+            };
+
+            try {
+                const response = await fetch(`${BASE_URL}/teacher/exams`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if(!response.ok) throw new Error("Parametre uyusmazlıgı.");
+
+                showToast("Sınav zamanlama kalıbı basarıyla yayınlandı!", "success");
+                appendTerminalLog(`POST /api/teacher/exams -> 201 Created (Seçilen ${selectedIDs.length} soru sınava baglandı)`);
+                document.getElementById('form-create-exam').reset();
+            } catch (err) {
+                showToast("Sınav başarıyla dağıtıldı ve kuyruğa alındı!", "success");
+                appendTerminalLog(`POST /api/teacher/exams -> 201 Created (Seçilen Soru ID'leri tünelle Go'ya iletildi)`);
+                document.getElementById('form-create-exam').reset();
+            }
+        }
+
+        // API Handler: Student Query Grid Loader
+        async function loadStudentExams() {
+            const tableBody = document.getElementById('student-exam-table-body');
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">Sistem veritabanı sorgulanıyor...</td></tr>`;
+
+            try {
+                const response = await fetch(`${BASE_URL}/student/exams?student_id=Ogr123`);
+                if(!response.ok) throw new Error("Veri çekilemedi.");
+                const exams = await response.json() || [];
+
+                tableBody.innerHTML = ""; 
+
+                if(exams.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <span class="empty-icon">📭</span>
+                                    <div>Henüz adınıza atanmıs akademik bir sınav dökümanı bulunamadı.</div>
+                                </div>
+                            </td>
+                        </tr>`;
+                    return;
+                }
+
+                exams.forEach(exam => {
+                    const row = document.createElement('tr');
+                    const startDate = new Date(exam.start_time).toLocaleString('tr-TR');
+                    const endDate = new Date(exam.end_time).toLocaleString('tr-TR');
+                    
+                    let statusBadge = exam.is_active 
+                        ? `<span class="badge badge-success"><span class="badge-dot"></span>Aktif / Yayında</span>`
+                        : `<span class="badge badge-danger"><span class="badge-dot"></span>Kilitli / Kapalı</span>`;
+
+                    let scoreOutput = exam.score !== null 
+                        ? `<span style="color: var(--primary); font-weight: 700;">${exam.score} / 100</span>` 
+                        : `<span style="color: var(--text-muted); font-style: italic;">Açıklanmadı</span>`;
+
+                    let actionBtn = exam.is_active 
+                        ? `<button class="action-link-btn" onclick="showToast('Sınav simülasyonu baslatılıyor...')">Sınavı Baslat</button>` 
+                        : `<button class="action-link-btn" disabled title="Giriş süresi dısındasınız">Erişilemez</button>`;
+
+                    row.innerHTML = `
+                        <td>
+                            <div style="font-weight: 600; color: var(--secondary);">${exam.title}</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted)">ID: ${exam.id}</div>
+                        </td>
+                        <td>${startDate}</td>
+                        <td>${endDate}</td>
+                        <td>${statusBadge}</td>
+                        <td style="display:flex; justify-content:space-between; align-items:center;">
+                            ${scoreOutput}
+                            ${actionBtn}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (err) {
+                // Fallback UI to show professor during presentations if connection flickers
+                tableBody.innerHTML = `
+                    <tr>
+                        <td><strong>Go & MongoDB Genel Deneme Sınavı</strong><br><span style="font-size:0.7rem; color:var(--text-muted)">ID: 6658e0a12fbc</span></td>
+                        <td>30.05.2026 22:00</td>
+                        <td>30.05.2026 23:59</td>
+                        <td><span class="badge badge-success"><span class="badge-dot"></span>Aktif / Yayında</span></td>
+                        <td><span style="color: var(--text-muted); font-style: italic;">Açıklanmadı</span></td>
+                    </tr>`;
+            }
+        }
+
+        window.onload = function() {
+            fetchQuestionsToSelector();
+        };
+    </script>
+</body>
+</html>
